@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Toaster } from "../ui/toaster";
+import { Navbar, Toaster } from "@/components";
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+export const ExternalLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="h-full">
       <Navbar />

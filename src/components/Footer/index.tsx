@@ -1,5 +1,4 @@
-import { Logo } from "@/components/Logo";
-import { Button } from "../ui/button";
+import { Logo, Button } from "@/components";
 
 export const Footer = () => {
   return (

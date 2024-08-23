@@ -1,7 +1,14 @@
-import { Footer } from "@/components";
-import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Navigate, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Footer,
+  ExternalLayout,
+  Button,
+  Input,
+  useToast,
   Form,
   FormControl,
   FormDescription,
@@ -9,17 +16,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/components";
 import { useAuth } from "@/hooks/useAuth";
-import { UserLoginDTO } from "@/types";
-import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import type { UserLoginDTO } from "@/types";
 import { UserLoginFromSchema } from "./schema";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+
 export const LogIn = () => {
   const navigate = useNavigate();
   const { login, isLoading, isAuthenticated, error } = useAuth();
@@ -52,7 +53,7 @@ export const LogIn = () => {
 
   return (
     !isLoading && (
-      <Layout>
+      <ExternalLayout>
         <div className="min-h-[100vh] flex flex-col">
           <div className={`flex flex-col flex-1 items-center justify-center`}>
             <Form {...form}>
@@ -109,7 +110,7 @@ export const LogIn = () => {
           </div>
           <Footer />
         </div>
-      </Layout>
+      </ExternalLayout>
     )
   );
 };

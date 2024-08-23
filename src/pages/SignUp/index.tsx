@@ -1,6 +1,8 @@
-import { Footer } from "@/components";
-import { Layout } from "@/components/Layout";
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Navigate, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -9,16 +11,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+  Button,
+  Footer,
+  Input,
+  ExternalLayout,
+  useToast,
+} from "@/components";
 import { useAuth } from "@/hooks/useAuth";
-import { CreateUserDTO } from "@/types";
-import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+import type { CreateUserDTO } from "@/types";
 import { CreateUserFromSchema } from "./schema";
 
 export const SignUp = () => {
@@ -54,7 +54,7 @@ export const SignUp = () => {
 
   return (
     !isLoading && (
-      <Layout>
+      <ExternalLayout>
         <div className="min-h-[100vh] flex flex-col">
           <div className={`flex flex-col my-6 sm:my-0 flex-1 items-center justify-center`}>
             <Form {...form}>
@@ -136,7 +136,7 @@ export const SignUp = () => {
           </div>
           <Footer />
         </div>
-      </Layout>
+      </ExternalLayout>
     )
   );
 };

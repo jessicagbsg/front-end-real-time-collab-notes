@@ -1,7 +1,6 @@
-import { Heading, Heros, Footer } from "@/components";
-import { Layout } from "../../components/Layout";
-import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Heading, Heros, Footer, ExternalLayout } from "@/components";
 
 export function LandingPage() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -12,7 +11,7 @@ export function LandingPage() {
 
   return (
     !isLoading && (
-      <Layout>
+      <ExternalLayout>
         <div className="min-h-[100vh] flex flex-col">
           <div
             className={`flex flex-col flex-1 items-center justify-center 
@@ -23,7 +22,7 @@ export function LandingPage() {
           </div>
           <Footer />
         </div>
-      </Layout>
+      </ExternalLayout>
     )
   );
 }

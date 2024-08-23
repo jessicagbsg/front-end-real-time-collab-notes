@@ -1,6 +1,6 @@
-import { ArrowRight } from "lucide-react";
-import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components";
 
 export const Heading = () => {
   const navigate = useNavigate();
