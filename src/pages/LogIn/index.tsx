@@ -34,9 +34,7 @@ export const LogIn = () => {
   const { toast } = useToast();
 
   const handleLogin = (values: z.infer<typeof UserLoginFromSchema>) => {
-    login(values).then(() => {
-      navigate("/home");
-    });
+    login(values);
   };
 
   useEffect(() => {
@@ -59,7 +57,7 @@ export const LogIn = () => {
           <div className={`flex flex-col flex-1 items-center justify-center`}>
             <Form {...form}>
               <form
-                className="w-96 lg:w-2/5 lg:max-w-screen-sm h-max flex flex-col gap-y-4 p-8 drop-shadow-md bg-white rounded-lg"
+                className="w-full sm:w-2/3 lg:w-2/5 lg:max-w-screen-sm h-max flex flex-col gap-y-4 p-8 drop-shadow-md bg-white rounded-lg"
                 onSubmit={form.handleSubmit(handleLogin)}
               >
                 <div className="flex flex-col gap-y-4 mb-4">
@@ -97,6 +95,15 @@ export const LogIn = () => {
                 <Button className="mt-4" type="submit">
                   Log in
                 </Button>
+                <h3 className="text-center mt-4 text-sm">
+                  Don't have an account?{" "}
+                  <span
+                    className="text-blue-500 cursor-pointer"
+                    onClick={() => navigate("/register")}
+                  >
+                    Sign up
+                  </span>
+                </h3>
               </form>
             </Form>
           </div>

@@ -45,7 +45,7 @@ export const useAuth = () => {
 
   const signUp = async (data: CreateUserDTO) => {
     try {
-      const response = await axios.post(`${API_URL}${Path.signup}`, { data });
+      const response = await axios.post(`${API_URL}${Path.signup}`, { ...data });
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
       setUser(response.data.user);

@@ -37,13 +37,10 @@ export const SignUp = () => {
   const { toast } = useToast();
 
   const handleLogin = (values: z.infer<typeof CreateUserFromSchema>) => {
-    signUp(values).then(() => {
-      navigate("/home");
-    });
+    signUp(values);
   };
 
   useEffect(() => {
-    console.log(error);
     if (!!error)
       toast({
         title: "Error",
@@ -59,10 +56,10 @@ export const SignUp = () => {
     !isLoading && (
       <Layout>
         <div className="min-h-[100vh] flex flex-col">
-          <div className={`flex flex-col flex-1 items-center justify-center`}>
+          <div className={`flex flex-col my-6 sm:my-0 flex-1 items-center justify-center`}>
             <Form {...form}>
               <form
-                className="w-96 lg:w-2/5 lg:max-w-screen-sm h-max flex flex-col gap-y-4 p-8 drop-shadow-md bg-white rounded-lg"
+                className="w-full sm:w-2/3 lg:w-2/5 lg:max-w-screen-sm h-max flex flex-col gap-y-4 p-8 drop-shadow-md bg-white rounded-lg"
                 onSubmit={form.handleSubmit(handleLogin)}
               >
                 <div className="flex flex-col gap-y-4 mb-4">
@@ -71,32 +68,34 @@ export const SignUp = () => {
                   </h1>
                   <FormDescription>Sign up to Notesphere</FormDescription>
                 </div>
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John" {...field} />
-                      </FormControl>
-                      <FormMessage>{form.formState.errors.firstName?.message}</FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Doe" {...field} />
-                      </FormControl>
-                      <FormMessage>{form.formState.errors.lastName?.message}</FormMessage>
-                    </FormItem>
-                  )}
-                />
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John" {...field} />
+                        </FormControl>
+                        <FormMessage>{form.formState.errors.firstName?.message}</FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Doe" {...field} />
+                        </FormControl>
+                        <FormMessage>{form.formState.errors.lastName?.message}</FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="email"
@@ -126,6 +125,12 @@ export const SignUp = () => {
                 <Button className="mt-4" type="submit">
                   Sign up
                 </Button>
+                <h3 className="text-center mt-4 text-sm">
+                  Already have an account?{" "}
+                  <span className="text-blue-500 cursor-pointer" onClick={() => navigate("/login")}>
+                    Log in
+                  </span>
+                </h3>
               </form>
             </Form>
           </div>
