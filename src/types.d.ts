@@ -8,6 +8,11 @@ export type User = {
   deletedAt: Date | null;
 };
 
+export type UserLoginDTO = {
+  email: string;
+  password: string;
+};
+
 export type CreateUserDTO = {
   email: string;
   password: string;

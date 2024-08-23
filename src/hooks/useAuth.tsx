@@ -1,26 +1,26 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { User } from "@/types";
+import { CreateUserDTO, User, UserLoginDTO } from "@/types";
 import { API_URL } from "@/config/variables";
 import { Path } from "@/config/path";
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const validateUser = async () => {
       const token = localStorage.getItem("token");
-
       if (!token) {
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
 
+      console.log(token);
       try {
-        const response = await axios.get(`${API_URL}/${Path.auth}`, {
+        const response = await axios.get(`${API_URL}${Path.auth}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -36,20 +36,33 @@ export const useAuth = () => {
         setUser(undefined);
         setError(error.response?.data?.message || "Authentication failed");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     validateUser();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const signUp = async (data: CreateUserDTO) => {
     try {
-      const response = await axios.post("/auth/login", { email, password });
+      const response = await axios.post(`${API_URL}${Path.signup}`, { data });
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
       setUser(response.data.user);
     } catch (error: any) {
+      setError(error.response?.data?.message || "Login failed");
+    }
+  };
+
+  const login = async (data: UserLoginDTO) => {
+    try {
+      const { email, password } = data;
+      const response = await axios.post(`${API_URL}${Path.login}`, { email, password });
+      localStorage.setItem("token", response.data.token);
+      setIsAuthenticated(true);
+      setUser(response.data.user);
+    } catch (error: any) {
+      console.log(error);
       setError(error.response?.data?.message || "Login failed");
     }
   };
@@ -60,5 +73,5 @@ export const useAuth = () => {
     setUser(undefined);
   };
 
-  return { isAuthenticated, user, loading, error, login, logout };
+  return { isAuthenticated, user, isLoading, error, login, logout, signUp };
 };

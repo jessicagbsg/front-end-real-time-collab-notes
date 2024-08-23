@@ -8,7 +8,7 @@ export const RoutesProvider = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LogIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/register" element={<SignUp />} />
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
         <Route path="/notes" element={<PrivateRoute element={<Note />} />} />
         <Route path="*" element={<NotFound />} />
