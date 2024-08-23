@@ -1,5 +1,10 @@
-import { LandingPage } from "@/components/LandingPage";
+import { AuthProvider } from "./context/AuthProvider";
+import { RoutesProvider } from "./routes/Routes";
 
 export function App() {
-  return <LandingPage />;
+  return (
+    <AuthProvider>
+      <RoutesProvider />
+    </AuthProvider>
+  );
 }
