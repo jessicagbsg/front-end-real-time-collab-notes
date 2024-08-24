@@ -10,7 +10,7 @@ export const RoutesProvider = () => {
         <Route path="/login" element={<LogIn />} />
         <Route path="/register" element={<SignUp />} />
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
-        <Route path="/notes" element={<PrivateRoute element={<Note />} />} />
+        <Route path="/notes/:roomId" element={<PrivateRoute element={<Note />} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

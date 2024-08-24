@@ -32,13 +32,15 @@ export const Home = () => {
   return (
     <InternalLayout>
       <div className="h-full flex flex-col">
-        <h2 className="ml-10 mt-20 mb-10 text-2xl sm:text-3xl md:text-4xl font-bold ">
+        <h2 className="pl-10 pt-20 pb-10 text-2xl sm:text-3xl md:text-4xl font-bold ">
           Welcome, {capitalize(user?.firstName)} {capitalize(user?.lastName)}
         </h2>
         <div
           className={cn(
-            "flex flex-col flex-1 text-center gap-y-8 p-8",
-            !isLoading && notes.length ? "items-start justify-start" : "items-center justify-center"
+            "flex flex-col w-full flex-1 gap-y-8 p-8 overflow-hidden",
+            !isLoading && notes.length
+              ? "items-start justify-start"
+              : "text-center items-center justify-center"
           )}
         >
           {isLoading && <Spinner />}
@@ -55,32 +57,35 @@ export const Home = () => {
                   Create a new note
                 </Button>
               </div>
-              <div className="flex gap-6 flex-wrap">
-                {notes.map((note) => (
-                  <div
-                    key={note.id}
-                    onClick={() => navigate(`${Path.note}/${note.room}`)}
-                    className={`flex flex-col items-start min-w-44 w-full max-w-56 min-h-32 h-full
-                      max-h-44 gap-y-2 p-4 cursor-pointer bg-secondary/10 rounded-lg shadow-md`}
-                  >
-                    <h4
-                      className={cn(
-                        "text-base font-semibold text-primary line-clamp-1",
-                        !note.title && "text-muted-foreground/40"
-                      )}
+              <div className="h-full overflow-x-auto pb-6">
+                <div className="flex gap-6 w-full flex-wrap">
+                  {notes.map((note) => (
+                    <div
+                      key={note.id}
+                      onClick={() => navigate(`${Path.note}/${note.room}`)}
+                      className={`flex flex-col items-start min-w-44 w-full max-w-full 
+                        sm:max-w-56 h-44  gap-y-2 p-4 cursor-pointer
+                        bg-secondary/10 rounded-lg shadow-md`}
                     >
-                      {note.title ?? "Untitled"}
-                    </h4>
-                    <p
-                      className={cn(
-                        "text-sm text-start text-muted-foreground line-clamp-5",
-                        !note.content && "text-muted-foreground/30"
-                      )}
-                    >
-                      {note.content ?? "No content"}
-                    </p>
-                  </div>
-                ))}
+                      <h4
+                        className={cn(
+                          "text-base font-semibold text-primary line-clamp-1",
+                          !note.title && "text-muted-foreground/40"
+                        )}
+                      >
+                        {note.title ?? "Untitled"}
+                      </h4>
+                      <p
+                        className={cn(
+                          "text-sm text-muted-foreground line-clamp-5",
+                          !note.content && "text-muted-foreground/30"
+                        )}
+                      >
+                        {note.content ?? "No content"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </>
           ) : (

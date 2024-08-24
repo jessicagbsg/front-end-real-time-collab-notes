@@ -11,11 +11,7 @@ export const InternalLayout = ({ children }: { children: ReactNode }) => {
     <div className="h-full flex">
       <SideBar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main
-        className={cn(
-          "h-full",
-          isCollapsed && "w-full",
-          isMobile ? "w-full" : "w-[calc(100%-240px)]"
-        )}
+        className={cn("h-full w-[calc(100%-240px)]", isCollapsed && "w-full", isMobile && "w-full")}
       >
         {children}
       </main>

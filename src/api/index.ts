@@ -77,6 +77,7 @@ export async function getNotesFromUser(userId: String) {
     const response = await httpClient.get(`${Path.note}?owner_id=${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
     return error.response?.data?.message || "Failed to get notes";

@@ -133,8 +133,11 @@ export const SideBar = ({
 
         {notes.map((note) => (
           <div
-            onClick={() => navigate(`${Path.note}/${note.id}`)}
-            className="px-5 py-2 flex items-center gap-x-2 hover:bg-primary/5 cursor-pointer w-full"
+            onClick={() => navigate(`${Path.note}/${note.room}`)}
+            className={cn(
+              "px-5 py-2 flex items-center gap-x-2 hover:bg-primary/5 cursor-pointer w-full",
+              pathname.includes(note.room) && "bg-primary/5"
+            )}
           >
             <NotebookIcon
               className={cn(
