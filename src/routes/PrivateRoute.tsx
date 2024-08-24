@@ -13,5 +13,5 @@ export const PrivateRoute = ({ element }: { element: JSX.Element }) => {
     );
   }
 
-  return isAuthenticated ? element : <Navigate to="/login" />;
+  return isAuthenticated ? element : <Navigate to="/" />;
 };

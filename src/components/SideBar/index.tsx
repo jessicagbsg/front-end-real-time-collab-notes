@@ -1,19 +1,29 @@
-import { ElementRef, useEffect, useRef, useState } from "react";
-import { ChevronsLeft, Home, MenuIcon, NotebookIcon } from "lucide-react";
+import { Dispatch, ElementRef, useEffect, useRef, useState } from "react";
+import { ChevronsLeft, CirclePlus, Home, MenuIcon, NotebookIcon } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 import { UserItem } from "@/components";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { useNotes } from "@/hooks/useNotes";
+import { Path } from "@/config/path";
+import { useAuth } from "@/hooks/useAuth";
 
-export const SideBar = () => {
+export const SideBar = ({
+  isCollapsed,
+  setIsCollapsed,
+}: {
+  isCollapsed: boolean;
+  setIsCollapsed: Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const navigate = useNavigate();
+  const { notes, addNote } = useNotes();
+  const { user } = useAuth();
   const pathname = window.location.pathname;
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isResizingRef = useRef(false);
   const sideBarRef = useRef<ElementRef<"aside">>(null);
   const navBarRef = useRef<ElementRef<"div">>(null);
   const [isResetting, setIsResetting] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
@@ -63,6 +73,13 @@ export const SideBar = () => {
     setTimeout(() => setIsResetting(false), 300);
   };
 
+  const handleCreateNote = async () => {
+    if (!user.id) return;
+    await addNote({ ownerId: user.id }).then((note) => {
+      navigate(`${Path.note}/${note.room}`);
+    });
+  };
+
   useEffect(() => {
     if (isMobile) handleCollapse();
     else handleResetWidth();
@@ -108,18 +125,33 @@ export const SideBar = () => {
           <p className="text-muted-foreground text-sm">Home</p>
         </div>
 
-        <div className="ml-3 mt-3 p-2 w-full flex items-center">
+        <div className="p-3 mt-3 w-full flex items-center">
           <p className="text-muted-foreground text-xs">Notes</p>
-          <span className="h-[1px] w-full mr-8 ml-2 bg-primary/10"></span>
+          <span className="h-[1px] w-full mx-3 bg-primary/10"></span>
+          <CirclePlus onClick={handleCreateNote} className="h-6 w-6 text-muted-foreground/50 " />
         </div>
 
-        <div
-          onClick={() => navigate(`/notes/${""}`)}
-          className="pl-5 flex items-center gap-x-2 p-2 hover:bg-primary/5 cursor-pointer w-full"
-        >
-          <NotebookIcon className="h-4 w-4 text-muted-foreground" />
-          <p className="text-muted-foreground text-sm">{"note.title"}</p>
-        </div>
+        {notes.map((note) => (
+          <div
+            onClick={() => navigate(`${Path.note}/${note.id}`)}
+            className="px-5 py-2 flex items-center gap-x-2 hover:bg-primary/5 cursor-pointer w-full"
+          >
+            <NotebookIcon
+              className={cn(
+                "h-4 w-4 text-muted-foreground",
+                !note.title && "text-muted-foreground/30"
+              )}
+            />
+            <p
+              className={cn(
+                "text-muted-foreground text-sm w-2/3 line-clamp-1",
+                !note.title && "text-muted-foreground/30"
+              )}
+            >
+              {note.title ?? "Untitled"}
+            </p>
+          </div>
+        ))}
 
         <div
           onMouseDown={handleMouseDown}

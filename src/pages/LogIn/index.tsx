@@ -23,6 +23,7 @@ import { UserLoginFromSchema } from "./schema";
 
 export const LogIn = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { login, isLoading, isAuthenticated, error } = useAuth();
   const form = useForm<UserLoginDTO>({
     resolver: zodResolver(UserLoginFromSchema),
@@ -32,14 +33,11 @@ export const LogIn = () => {
     },
   });
 
-  const { toast } = useToast();
-
   const handleLogin = (values: z.infer<typeof UserLoginFromSchema>) => {
     login(values);
   };
 
   useEffect(() => {
-    console.log(error);
     if (!!error)
       toast({
         title: "Error",
