@@ -12,7 +12,7 @@ export function LandingPage() {
   return (
     !isLoading && (
       <ExternalLayout>
-        <div className="min-h-[100vh] flex flex-col">
+        <div className="h-full flex flex-col">
           <div
             className={`flex flex-col flex-1 items-center justify-center 
           text-center gap-y-8 px-6 pb-10`}

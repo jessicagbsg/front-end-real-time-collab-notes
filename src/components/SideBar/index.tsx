@@ -1,14 +1,14 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, Home, MenuIcon, NotebookIcon } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
-import { Spinner, Button } from "@/components";
-import { useAuth } from "@/hooks/useAuth";
+import { UserItem } from "@/components";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 export const SideBar = () => {
+  const navigate = useNavigate();
   const pathname = window.location.pathname;
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const { isAuthenticated, user } = useAuth();
   const isResizingRef = useRef(false);
   const sideBarRef = useRef<ElementRef<"aside">>(null);
   const navBarRef = useRef<ElementRef<"div">>(null);
@@ -95,20 +95,31 @@ export const SideBar = () => {
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        <div className="p-2">
-          {isAuthenticated && user ? (
-            <Button size="sm" asChild>
-              <div className="h-fit w-fit bg-red rounded-full">
-                {user.firstName[0].toUpperCase()}
-                {user.lastName[0].toUpperCase()}
-              </div>
-            </Button>
-          ) : (
-            <Spinner />
-          )}
+
+        <div className="p-2 hover:bg-primary/5">
+          <UserItem />
         </div>
-        <div className="p-2">Action items</div>
-        <div className="p-2">Notes</div>
+
+        <div
+          onClick={() => navigate("/home")}
+          className="pl-5 flex items-center gap-x-2 p-2 hover:bg-primary/5 cursor-pointer w-full"
+        >
+          <Home className="h-4 w-4 text-muted-foreground" />
+          <p className="text-muted-foreground text-sm">Home</p>
+        </div>
+
+        <div className="ml-3 mt-3 p-2 w-full flex items-center">
+          <p className="text-muted-foreground text-xs">Notes</p>
+          <span className="h-[1px] w-full mr-8 ml-2 bg-primary/10"></span>
+        </div>
+
+        <div
+          onClick={() => navigate(`/notes/${""}`)}
+          className="pl-5 flex items-center gap-x-2 p-2 hover:bg-primary/5 cursor-pointer w-full"
+        >
+          <NotebookIcon className="h-4 w-4 text-muted-foreground" />
+          <p className="text-muted-foreground text-sm">{"note.title"}</p>
+        </div>
 
         <div
           onMouseDown={handleMouseDown}

@@ -3,12 +3,13 @@ import axios from "axios";
 import { CreateUserDTO, User, UserLoginDTO } from "@/types";
 import { API_URL } from "@/config/variables";
 import { Path } from "@/config/path";
+import { validateToken } from "@/api";
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const user: Partial<User> = JSON.parse(localStorage.getItem("user") || "");
 
   useEffect(() => {
     const validateUser = async () => {
@@ -19,20 +20,15 @@ export const useAuth = () => {
       }
 
       try {
-        const response = await axios.get(`${API_URL}${Path.auth}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.status === 200) {
-          setUser(response.data);
-          setIsAuthenticated(true);
-        } else {
-          setUser(undefined);
-          setIsAuthenticated(false);
+        const validatedUser = await validateToken(token);
+        const user = localStorage.getItem("user");
+        if (!user || JSON.stringify(validatedUser) !== user) {
+          localStorage.setItem("user", JSON.stringify(validatedUser));
         }
+
+        setIsAuthenticated(true);
       } catch (error: any) {
         setIsAuthenticated(false);
-        setUser(undefined);
         setError(error.response?.data?.message || "Authentication failed");
       } finally {
         setIsLoading(false);
@@ -46,7 +42,16 @@ export const useAuth = () => {
     try {
       const response = await axios.post(`${API_URL}${Path.signup}`, { ...data });
       localStorage.setItem("token", response.data.token);
-      setUser(response.data);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: response.data.id,
+          email: response.data.email,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+        })
+      );
+
       setIsAuthenticated(true);
     } catch (error: any) {
       setError(error.response?.data?.message || "Login failed");
@@ -58,17 +63,24 @@ export const useAuth = () => {
       const { email, password } = data;
       const response = await axios.post(`${API_URL}${Path.login}`, { email, password });
       localStorage.setItem("token", response.data.token);
-      setUser(response.data);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: response.data.id,
+          email: response.data.email,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+        })
+      );
       setIsAuthenticated(true);
     } catch (error: any) {
-      console.log(error);
       setError(error.response?.data?.message || "Login failed");
     }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setUser(undefined);
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
   };
 
