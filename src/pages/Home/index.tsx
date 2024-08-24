@@ -17,7 +17,7 @@ export const Home = () => {
   const handleCreateNote = async () => {
     if (!user.id) return;
     await addNote({ ownerId: user.id }).then((note) => {
-      navigate(`${Path.note}/${note.room}`);
+      navigate(`${Path.notes}/${note.room}`);
     });
   };
 
@@ -57,12 +57,12 @@ export const Home = () => {
                   Create a new note
                 </Button>
               </div>
-              <div className="h-full overflow-x-auto pb-6">
+              <div className="h-full w-full overflow-x-auto pb-6">
                 <div className="flex gap-6 w-full flex-wrap">
                   {notes.map((note) => (
                     <div
                       key={note.id}
-                      onClick={() => navigate(`${Path.note}/${note.room}`)}
+                      onClick={() => navigate(`${Path.notes}/${note.room}`)}
                       className={`flex flex-col items-start min-w-44 w-full max-w-full 
                         sm:max-w-56 h-44  gap-y-2 p-4 cursor-pointer
                         bg-secondary/10 rounded-lg shadow-md`}

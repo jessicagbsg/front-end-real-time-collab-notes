@@ -21,7 +21,7 @@ export async function validateToken(token: string) {
 
 export async function register(data: CreateUserDTO) {
   try {
-    const response = await axios.post(Path.signup, { ...data });
+    const response = await httpClient.post(Path.signup, { ...data });
     localStorage.setItem("token", response.data.token);
     localStorage.setItem(
       "user",
@@ -39,7 +39,7 @@ export async function register(data: CreateUserDTO) {
 
 export async function userLogin(data: UserLoginDTO) {
   try {
-    const response = await axios.post(Path.login, { ...data });
+    const response = await httpClient.post(Path.login, { ...data });
     localStorage.setItem("token", response.data.token);
     localStorage.setItem(
       "user",
@@ -71,13 +71,24 @@ export async function createNote(data: CreateNoteDTO) {
   }
 }
 
-export async function getNotesFromUser(userId: String) {
+export async function getNotesFromUser() {
   try {
     const token = localStorage.getItem("token");
-    const response = await httpClient.get(`${Path.note}?owner_id=${userId}`, {
+    const response = await httpClient.get(Path.notes, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log(response.data);
+    return response.data;
+  } catch (error: any) {
+    return error.response?.data?.message || "Failed to get notes";
+  }
+}
+
+export async function getNote(roomId: string) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await httpClient.get(`${Path.notes}/${roomId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error: any) {
     return error.response?.data?.message || "Failed to get notes";

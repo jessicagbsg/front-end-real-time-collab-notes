@@ -1,25 +1,35 @@
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { Note, CreateNoteDTO } from "@/types";
-import { createNote, getNotesFromUser } from "@/api";
+import { createNote, getNote, getNotesFromUser } from "@/api";
 
 export const useNotes = () => {
+  const { roomId } = useParams();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchNotes();
+    fetchNote();
   }, []);
+
+  const fetchNote = async () => {
+    try {
+      if (!roomId) return;
+      const note = await getNote(roomId);
+      setNote(note);
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Failed to fetch note");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchNotes = async () => {
     try {
-      const user = localStorage.getItem("user");
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-      const parsedUser = JSON.parse(user);
-      const notes = await getNotesFromUser(parsedUser.id);
+      const notes = await getNotesFromUser();
       setNotes(notes);
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to fetch notes");
@@ -38,5 +48,5 @@ export const useNotes = () => {
     }
   };
 
-  return { notes, isLoading, error, addNote };
+  return { notes, note, isLoading, error, addNote };
 };

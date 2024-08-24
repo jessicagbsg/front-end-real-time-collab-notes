@@ -6,7 +6,7 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const user: Partial<User> = JSON.parse(localStorage.getItem("user") || "");
+  const user: Partial<User> = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     validateUser();
