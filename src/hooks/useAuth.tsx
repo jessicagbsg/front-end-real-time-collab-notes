@@ -18,18 +18,17 @@ export const useAuth = () => {
         return;
       }
 
-      console.log(token);
       try {
         const response = await axios.get(`${API_URL}${Path.auth}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.status === 200) {
+          setUser(response.data);
           setIsAuthenticated(true);
-          setUser(response.data.user);
         } else {
-          setIsAuthenticated(false);
           setUser(undefined);
+          setIsAuthenticated(false);
         }
       } catch (error: any) {
         setIsAuthenticated(false);
@@ -47,8 +46,8 @@ export const useAuth = () => {
     try {
       const response = await axios.post(`${API_URL}${Path.signup}`, { ...data });
       localStorage.setItem("token", response.data.token);
+      setUser(response.data);
       setIsAuthenticated(true);
-      setUser(response.data.user);
     } catch (error: any) {
       setError(error.response?.data?.message || "Login failed");
     }
@@ -59,8 +58,8 @@ export const useAuth = () => {
       const { email, password } = data;
       const response = await axios.post(`${API_URL}${Path.login}`, { email, password });
       localStorage.setItem("token", response.data.token);
+      setUser(response.data);
       setIsAuthenticated(true);
-      setUser(response.data.user);
     } catch (error: any) {
       console.log(error);
       setError(error.response?.data?.message || "Login failed");
@@ -69,8 +68,8 @@ export const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    setIsAuthenticated(false);
     setUser(undefined);
+    setIsAuthenticated(false);
   };
 
   return { isAuthenticated, user, isLoading, error, login, logout, signUp };

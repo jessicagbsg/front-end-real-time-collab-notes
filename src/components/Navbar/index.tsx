@@ -1,13 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthContext } from "@/context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { Logo, Spinner, Button } from "@/components";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Navbar = () => {
   const scrolled = useScrollTop();
   const navigate = useNavigate();
-  const { loading, isAuthenticated, user } = useAuthContext();
+  const { isLoading, isAuthenticated } = useAuth();
 
   return (
     <div
@@ -18,8 +18,8 @@ export const Navbar = () => {
     >
       <Logo />
       <div className="flex items-center gap-x-2 w-full justify-end md:ml-auto ">
-        {loading && <Spinner />}
-        {!loading && !isAuthenticated && (
+        {isLoading && <Spinner />}
+        {!isLoading && !isAuthenticated && (
           <>
             <Button onClick={() => navigate("/login")} variant="ghost" size="sm">
               Log in
@@ -28,15 +28,6 @@ export const Navbar = () => {
               Sign up
             </Button>
           </>
-        )}
-        {!loading && isAuthenticated && user && (
-          <Button variant="ghost" size="sm" asChild>
-            <Link to={"/home"}>Notes</Link>
-            <div className="h-4 w-4 bg-red rounded-full">
-              {user.firstName[0]}
-              {user.lastName[0]}
-            </div>
-          </Button>
         )}
       </div>
     </div>

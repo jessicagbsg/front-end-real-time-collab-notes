@@ -1,23 +1,25 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { User } from "@/types";
+import { CreateUserDTO, User, UserLoginDTO } from "@/types";
 
 type AuthContextType = {
   isAuthenticated: boolean;
   user: User | undefined;
-  loading: boolean;
+  isLoading: boolean;
   error: null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (data: UserLoginDTO) => Promise<void>;
   logout: () => void;
+  signUp: (data: CreateUserDTO) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: undefined,
-  loading: true,
+  isLoading: true,
   error: null,
   login: async () => {},
   logout: () => {},
+  signUp: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
