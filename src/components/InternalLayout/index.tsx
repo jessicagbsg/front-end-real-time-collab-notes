@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { SideBar } from "../SideBar";
+import { SideBar } from "@/components";
 import { useMediaQuery } from "usehooks-ts";
 import { cn } from "@/lib/utils";
 

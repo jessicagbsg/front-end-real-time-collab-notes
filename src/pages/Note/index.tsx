@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { Input, InternalLayout, useToast } from "@/components";
+import { Editor, InternalLayout, useToast } from "@/components";
 import { API_URL } from "@/config/variables";
 import { Path } from "@/config/path";
 import { useNotes } from "@/hooks/useNotes";
@@ -32,20 +32,25 @@ export const Note = () => {
       toast({ title: "Joining", description: message });
     });
 
-    return () => {
-      socket.off("join-room");
-    };
-  }, [roomId]);
-
-  useEffect(() => {
     socket.on("edit-note", (updatedNote: { title: string; content: string }) => {
       setNoteContent(updatedNote);
     });
 
     return () => {
+      socket.off("join-room");
       socket.off("edit-note");
     };
-  }, []);
+  }, [roomId]);
+
+  // useEffect(() => {
+  //   socket.on("edit-note", (updatedNote: { title: string; content: string }) => {
+  //     setNoteContent(updatedNote);
+  //   });
+
+  //   return () => {
+  //     socket.off("edit-note");
+  //   };
+  // }, []);
 
   const handleEditNoteTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedTitle = e.target.value;
@@ -71,16 +76,8 @@ export const Note = () => {
 
   return (
     <InternalLayout>
-      <div className="h-full flex flex-col">
-        <h2 className="ml-10 mt-10 text-2xl sm:text-3xl md:text-4xl font-bold ">
-          {noteContent.title ?? "untitled"}
-        </h2>
-        <Input value={noteContent.title} onChange={handleEditNoteTitle} />
-        <h2 className="ml-10 mt-10 text-2xl sm:text-3xl md:text-4xl font-bold ">
-          {noteContent.content}
-        </h2>
-        <Input value={noteContent.content} onChange={handleEditNoteContent} />
-      </div>
+      <Editor />
+      <Editor />
     </InternalLayout>
   );
 };
