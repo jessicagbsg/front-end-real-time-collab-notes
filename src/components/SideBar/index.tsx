@@ -1,7 +1,7 @@
 import { Dispatch, ElementRef, useEffect, useRef, useState } from "react";
 import { ChevronsLeft, CirclePlus, Home, MenuIcon, NotebookIcon } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
-import { UserItem } from "@/components";
+import { Spinner, UserItem } from "@/components";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "@/hooks/useNotes";
@@ -16,8 +16,8 @@ export const SideBar = ({
   setIsCollapsed: Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const navigate = useNavigate();
-  const { notes, addNote } = useNotes();
-  const { user } = useAuth();
+  const { notes, addNote, isLoading } = useNotes();
+  const { user, isLoading: useLoading } = useAuth();
   const pathname = window.location.pathname;
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isResizingRef = useRef(false);
@@ -89,6 +89,8 @@ export const SideBar = ({
     if (isMobile) handleCollapse();
   }, [pathname, isMobile]);
 
+  if (isLoading || useLoading) return <Spinner />;
+
   return (
     <>
       <aside
@@ -128,7 +130,10 @@ export const SideBar = ({
         <div className="p-3 mt-3 w-full flex items-center">
           <p className="text-muted-foreground text-xs">Notes</p>
           <span className="h-[1px] w-full mx-3 bg-primary/10"></span>
-          <CirclePlus onClick={handleCreateNote} className="h-6 w-6 text-muted-foreground/50 " />
+          <CirclePlus
+            onClick={handleCreateNote}
+            className="h-6 w-6 text-muted-foreground/50 cursor-pointer"
+          />
         </div>
 
         {notes.map((note) => (

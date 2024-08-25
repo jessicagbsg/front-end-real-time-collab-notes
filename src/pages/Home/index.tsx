@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export const Home = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading: userLoading } = useAuth();
   const { notes, isLoading, addNote, error } = useNotes();
   const { toast } = useToast();
 
@@ -29,6 +29,8 @@ export const Home = () => {
       });
   }, [error]);
 
+  if (isLoading || userLoading) return <Spinner />;
+
   return (
     <InternalLayout>
       <div className="h-full flex flex-col">
@@ -43,8 +45,7 @@ export const Home = () => {
               : "text-center items-center justify-center"
           )}
         >
-          {isLoading && <Spinner />}
-          {!isLoading && notes.length ? (
+          {notes.length ? (
             <>
               <div className="flex w-full items-center justify-between">
                 <div className="text-muted-foreground flex items-center gap-x-2">
