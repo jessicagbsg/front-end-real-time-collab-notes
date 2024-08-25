@@ -8,6 +8,7 @@ import { useNotes } from "@/hooks/useNotes";
 import { Share2 } from "lucide-react";
 import { isString } from "lodash";
 import { useAuth } from "@/hooks/useAuth";
+import { formatDistance, subDays } from "date-fns";
 
 const socket = io(`${API_URL}${Path.note}`, {
   extraHeaders: {
@@ -26,10 +27,20 @@ export const Note = () => {
   const [noteContent, setNoteContent] = useState({
     title: note?.title ?? "",
     content: note?.content ?? "",
+    updatedAt: "",
   });
 
   useEffect(() => {
-    setNoteContent({ title: note?.title ?? "", content: note?.content ?? "" });
+    if (note) {
+      const updatedDate = new Date(note.updatedAt?.toString() ?? subDays(new Date(), 1).toString());
+      const now = new Date();
+      const diff = formatDistance(updatedDate, now, { addSuffix: true });
+      setNoteContent({
+        title: note.title ?? "",
+        content: note.content ?? "",
+        updatedAt: diff,
+      });
+    }
   }, [note]);
 
   useEffect(() => {
@@ -56,7 +67,7 @@ export const Note = () => {
 
   useEffect(() => {
     socket.on("edit-note", (updatedNote: { title: string; content: string }) => {
-      setNoteContent(updatedNote);
+      setNoteContent({ ...updatedNote, updatedAt: "just now" });
     });
 
     return () => {
@@ -104,6 +115,9 @@ export const Note = () => {
           onClick={handleShareNote}
         />
         <div className="flex h-full flex-col gap-y-3 mt-20 mx-10">
+          <div className="flex items-center w-full justify-end gap-x-2">
+            <p className="text-sm text-muted-foreground">Last updated: {noteContent.updatedAt}</p>
+          </div>
           <div className="min-h-2/6 w-full ">
             <Textarea
               className="text-2xl sm:text-3xl h-full w-full md:text-4xl font-bold"
