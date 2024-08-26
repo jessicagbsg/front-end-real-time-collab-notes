@@ -180,6 +180,7 @@ export const SideBar = ({
 
         {notes.map((note, index) => (
           <div
+            key={note.id}
             className={cn(
               "flex items-center justify-between hover:bg-primary/5",
               pathname.includes(note.room) && "bg-primary/5"

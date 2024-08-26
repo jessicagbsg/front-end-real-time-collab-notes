@@ -45,6 +45,7 @@ export const SignUp = () => {
       toast({
         title: "Error",
         description: error || "An error occurred",
+        variant: "destructive",
       });
   }, [error]);
 

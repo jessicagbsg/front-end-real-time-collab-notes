@@ -40,8 +40,9 @@ export const LogIn = () => {
   useEffect(() => {
     if (!!error)
       toast({
-        title: "Error",
+        title: "Error trying to log in",
         description: error || "An error occurred",
+        variant: "destructive",
       });
   }, [error]);
 

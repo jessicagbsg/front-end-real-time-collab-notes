@@ -17,30 +17,40 @@ export async function validateToken(token: string) {
 
 export async function register(data: CreateUserDTO) {
   const response = await httpClient.post(Path.signup, { ...data });
-  localStorage.setItem("token", response.data.token);
-  localStorage.setItem(
-    "user",
-    JSON.stringify({
-      id: response.data.id,
-      email: response.data.email,
-      firstName: response.data.firstName,
-      lastName: response.data.lastName,
-    })
-  );
+  if (response.status === 201) {
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        id: response.data.id,
+        email: response.data.email,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName,
+      })
+    );
+  } else {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
 }
 
 export async function userLogin(data: UserLoginDTO) {
   const response = await httpClient.post(Path.login, { ...data });
-  localStorage.setItem("token", response.data.token);
-  localStorage.setItem(
-    "user",
-    JSON.stringify({
-      id: response.data.id,
-      email: response.data.email,
-      firstName: response.data.firstName,
-      lastName: response.data.lastName,
-    })
-  );
+  if (response.status === 200) {
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        id: response.data.id,
+        email: response.data.email,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName,
+      })
+    );
+  } else {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
 }
 
 export async function createNote(data: CreateNoteDTO) {
