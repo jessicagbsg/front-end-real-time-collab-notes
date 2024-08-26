@@ -71,7 +71,7 @@ export const Home = () => {
                       key={note.id}
                       onClick={() => navigate(`${Path.notes}/${note.room}`)}
                       className={`flex flex-col items-start min-w-44 w-full max-w-full 
-                        sm:max-w-56 h-44  gap-y-2 p-4 cursor-pointer
+                        sm:max-w-56 h-44 gap-y-2 p-4 cursor-pointer
                         bg-secondary/10 rounded-lg shadow-md`}
                     >
                       <h4
@@ -84,7 +84,7 @@ export const Home = () => {
                       </h4>
                       <p
                         className={cn(
-                          "text-sm text-muted-foreground line-clamp-5",
+                          "text-sm text-muted-foreground w-full line-clamp-5",
                           !note.content && "text-muted-foreground/30"
                         )}
                       >
