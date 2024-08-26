@@ -9,50 +9,38 @@ export const httpClient = axios.create({
 });
 
 export async function validateToken(token: string) {
-  try {
-    const response = await httpClient.get(Path.auth, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error: any) {
-    return error.response?.data?.message || "Authentication failed";
-  }
+  const response = await httpClient.get(Path.auth, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 }
 
 export async function register(data: CreateUserDTO) {
-  try {
-    const response = await httpClient.post(Path.signup, { ...data });
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        id: response.data.id,
-        email: response.data.email,
-        firstName: response.data.firstName,
-        lastName: response.data.lastName,
-      })
-    );
-  } catch (error: any) {
-    return error.response?.data?.message || "Registration failed";
-  }
+  const response = await httpClient.post(Path.signup, { ...data });
+  localStorage.setItem("token", response.data.token);
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      id: response.data.id,
+      email: response.data.email,
+      firstName: response.data.firstName,
+      lastName: response.data.lastName,
+    })
+  );
 }
 
 export async function userLogin(data: UserLoginDTO) {
-  try {
-    const response = await httpClient.post(Path.login, { ...data });
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        id: response.data.id,
-        email: response.data.email,
-        firstName: response.data.firstName,
-        lastName: response.data.lastName,
-      })
-    );
-  } catch (error: any) {
-    return error.response?.data?.message || "Login failed";
-  }
+  const response = await httpClient.post(Path.login, { ...data });
+  localStorage.setItem("token", response.data.token);
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      id: response.data.id,
+      email: response.data.email,
+      firstName: response.data.firstName,
+      lastName: response.data.lastName,
+    })
+  );
 }
 
 export async function createNote(data: CreateNoteDTO) {

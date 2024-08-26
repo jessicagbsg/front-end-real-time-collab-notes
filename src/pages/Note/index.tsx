@@ -1,14 +1,15 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { InternalLayout, Textarea, useToast } from "@/components";
+import { Textarea, useToast } from "@/components";
 import { API_URL } from "@/config/variables";
 import { Path } from "@/config/path";
 import { useNotes } from "@/hooks/useNotes";
 import { Share2 } from "lucide-react";
-import { isString } from "lodash";
-import { useAuth } from "@/hooks/useAuth";
+import _, { isString } from "lodash";
 import { formatDistance, subDays } from "date-fns";
+import { useAuthContext } from "@/context/AuthProvider";
+// import { useDebounce } from "@/hooks/useDebounce";
 
 const socket = io(`${API_URL}${Path.note}`, {
   extraHeaders: {
@@ -21,14 +22,16 @@ const socket = io(`${API_URL}${Path.note}`, {
 
 export const Note = () => {
   const { roomId } = useParams();
-  const { note } = useNotes();
+  const { note, fetchNotes } = useNotes();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const [noteContent, setNoteContent] = useState({
-    title: note?.title ?? "",
-    content: note?.content ?? "",
+    title: note?.title ?? undefined,
+    content: note?.content ?? undefined,
     updatedAt: "",
   });
+
+  // const debouncedValue = useDebounce(noteContent.content, 300);
 
   useEffect(() => {
     if (note) {
@@ -49,14 +52,14 @@ export const Note = () => {
     socket.on("join-room", (content: string | { user: string; message: string }) => {
       const message = isString(content) ? content : content.message;
       const userId = isString(content) ? "" : content.user;
-      if (userId === user.id) return;
+      if (userId === user?.id) return;
       toast({ title: "Joined Note", description: message });
     });
 
     socket.on("leave-room", (content: string | { user: string; message: string }) => {
       const message = isString(content) ? content : content.message;
       const userId = isString(content) ? "" : content.user;
-      if (userId === user.id) return;
+      if (userId === user?.id) return;
       toast({ title: "Left Note", description: message });
     });
 
@@ -75,8 +78,13 @@ export const Note = () => {
     };
   }, []);
 
+  useEffect(() => {
+    fetchNotes();
+  }, [noteContent]);
+
   const handleEditNoteTitle = (title: ChangeEvent<HTMLTextAreaElement>) => {
     title.preventDefault();
+
     setNoteContent((prevContent) => ({
       ...prevContent,
       title: title.target.value,
@@ -95,6 +103,7 @@ export const Note = () => {
       ...prevContent,
       content: content.target.value,
     }));
+    // console.log({ content: content.target.value });
     socket.emit("edit-note", {
       room: roomId,
       title: noteContent.title,
@@ -108,7 +117,7 @@ export const Note = () => {
   };
 
   return (
-    <InternalLayout>
+    <>
       <div className="relative h-full flex flex-col">
         <Share2
           className="z-[999999] absolute w-6 h-6 top-2 right-4 text-muted-foreground cursor-pointer"
@@ -136,6 +145,6 @@ export const Note = () => {
           </div>
         </div>
       </div>
-    </InternalLayout>
+    </>
   );
 };

@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
 import { ChevronsLeftRight } from "lucide-react";
 import {
   Avatar,
@@ -13,7 +13,7 @@ import { capitalize } from "lodash";
 import { useNavigate } from "react-router-dom";
 
 export const UserItem = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthContext();
   const navigate = useNavigate();
 
   const handleLogOut = () => {

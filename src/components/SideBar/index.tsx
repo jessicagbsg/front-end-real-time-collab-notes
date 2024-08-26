@@ -1,12 +1,24 @@
 import { Dispatch, ElementRef, useEffect, useRef, useState } from "react";
-import { ChevronsLeft, CirclePlus, Home, MenuIcon, NotebookIcon } from "lucide-react";
+import { ChevronsLeft, CirclePlus, Home, MenuIcon, NotebookIcon, Trash2 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 import { Spinner, UserItem } from "@/components";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "@/hooks/useNotes";
 import { Path } from "@/config/path";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
+import { io } from "socket.io-client";
+import { API_URL } from "@/config/variables";
+import { Note } from "@/types";
+
+const socket = io(`${API_URL}${Path.note}`, {
+  extraHeaders: {
+    access_token: localStorage.getItem("token") as string,
+  },
+  auth: {
+    token: localStorage.getItem("token") as string,
+  },
+});
 
 export const SideBar = ({
   isCollapsed,
@@ -16,8 +28,8 @@ export const SideBar = ({
   setIsCollapsed: Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const navigate = useNavigate();
-  const { notes, addNote, isLoading } = useNotes();
-  const { user, isLoading: useLoading } = useAuth();
+  const { notes, addNote, setNotes, isLoading } = useNotes();
+  const { user, isLoading: useLoading } = useAuthContext();
   const pathname = window.location.pathname;
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isResizingRef = useRef(false);
@@ -74,10 +86,34 @@ export const SideBar = ({
   };
 
   const handleCreateNote = async () => {
-    if (!user.id) return;
+    if (!user?.id) return;
     await addNote({ ownerId: user.id }).then((note) => {
       navigate(`${Path.notes}/${note.room}`);
+      setNotes((prev) => [
+        ...prev,
+        {
+          ownerId: user.id,
+          room: note.room,
+          title: note.title,
+          content: note.content,
+          members: note.members,
+        } as Note,
+      ]);
     });
+  };
+
+  const handleDeleteNote = (noteId: string, noteRoom: string, index: number) => {
+    socket.emit("delete-note", { room: noteRoom });
+
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
+    setNotes(updatedNotes);
+
+    if (updatedNotes.length > 0) {
+      const nextNote = updatedNotes[index] || updatedNotes[index - 1];
+      navigate(`${Path.notes}/${nextNote.room}`);
+    } else {
+      navigate("/home");
+    }
   };
 
   useEffect(() => {
@@ -136,29 +172,44 @@ export const SideBar = ({
           />
         </div>
 
-        {notes.map((note) => (
+        {notes.map((note, index) => (
           <div
-            key={note.id}
-            onClick={() => navigate(`${Path.notes}/${note.room}`)}
             className={cn(
-              "px-5 py-2 flex items-center gap-x-2 hover:bg-primary/5 cursor-pointer w-full",
+              "flex items-center justify-between hover:bg-primary/5",
               pathname.includes(note.room) && "bg-primary/5"
             )}
           >
-            <NotebookIcon
-              className={cn(
-                "h-4 w-4 text-muted-foreground",
-                !note.title && "text-muted-foreground/30"
-              )}
-            />
-            <p
-              className={cn(
-                "text-muted-foreground text-sm w-2/3 line-clamp-1",
-                !note.title && "text-muted-foreground/30"
-              )}
+            <div
+              key={note.id}
+              onClick={() => navigate(`${Path.notes}/${note.room}`)}
+              className={cn("px-5 py-2 flex items-center gap-x-2  cursor-pointer w-full")}
             >
-              {note.title ?? "Untitled"}
-            </p>
+              <NotebookIcon
+                className={cn(
+                  "h-4 w-4 text-muted-foreground",
+                  !note.title && "text-muted-foreground/30"
+                )}
+              />
+              <p
+                className={cn(
+                  "text-muted-foreground text-sm w-2/3 line-clamp-1",
+                  !note.title && "text-muted-foreground/30"
+                )}
+              >
+                {note.title ?? "Untitled"}
+              </p>
+            </div>
+            <div
+              className={"px-3 py-2 cursor-pointer"}
+              onClick={() => handleDeleteNote(note.id, note.room, index)}
+            >
+              <Trash2
+                className={cn(
+                  "h-4 w-4 text-muted-foreground hover:text-red-500 ",
+                  !note.title && "text-muted-foreground/30"
+                )}
+              />
+            </div>
           </div>
         ))}
 

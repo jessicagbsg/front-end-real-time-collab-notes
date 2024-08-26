@@ -1,9 +1,9 @@
-import { Spinner } from "@/components";
-import { useAuth } from "@/hooks/useAuth";
+import { InternalLayout, Spinner } from "@/components";
+import { useAuthContext } from "@/context/AuthProvider";
 import { Navigate } from "react-router-dom";
 
 export const PrivateRoute = ({ element }: { element: JSX.Element }) => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -13,5 +13,7 @@ export const PrivateRoute = ({ element }: { element: JSX.Element }) => {
     );
   }
 
-  return isAuthenticated ? element : <Navigate to="/" />;
+  if (!isAuthenticated) return <Navigate to="/" />;
+
+  return <InternalLayout>{element}</InternalLayout>;
 };

@@ -15,7 +15,7 @@ export const useNotes = () => {
   }, []);
 
   useEffect(() => {
-    fetchNote();
+    if (roomId) fetchNote();
   }, [roomId]);
 
   const fetchNote = async () => {
@@ -51,5 +51,5 @@ export const useNotes = () => {
     }
   };
 
-  return { notes, note, isLoading, error, addNote };
+  return { notes, setNotes, fetchNotes, note, isLoading, error, addNote };
 };

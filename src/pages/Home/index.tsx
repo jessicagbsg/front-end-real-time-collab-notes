@@ -1,6 +1,6 @@
-import { Button, InternalLayout, Spinner, useToast } from "@/components";
+import { Button, Spinner, useToast } from "@/components";
 import { capitalize } from "lodash";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
 import { BookOpen, PlusCircle } from "lucide-react";
 import { useNotes } from "@/hooks/useNotes";
 import { cn } from "@/lib/utils";
@@ -10,12 +10,12 @@ import { useEffect } from "react";
 
 export const Home = () => {
   const navigate = useNavigate();
-  const { user, isLoading: userLoading } = useAuth();
+  const { user, isLoading: userLoading } = useAuthContext();
   const { notes, isLoading, addNote, error } = useNotes();
   const { toast } = useToast();
 
   const handleCreateNote = async () => {
-    if (!user.id) return;
+    if (!user?.id) return;
     await addNote({ ownerId: user.id }).then((note) => {
       navigate(`${Path.notes}/${note.room}`);
     });
@@ -32,7 +32,7 @@ export const Home = () => {
   if (isLoading || userLoading) return <Spinner />;
 
   return (
-    <InternalLayout>
+    <>
       <div className="h-full flex flex-col">
         <h2 className="pl-10 pt-20 pb-10 text-2xl sm:text-3xl md:text-4xl font-bold ">
           Welcome, {capitalize(user?.firstName)} {capitalize(user?.lastName)}
@@ -107,6 +107,6 @@ export const Home = () => {
           )}
         </div>
       </div>
-    </InternalLayout>
+    </>
   );
 };

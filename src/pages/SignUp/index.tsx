@@ -17,13 +17,13 @@ import {
   ExternalLayout,
   useToast,
 } from "@/components";
-import { useAuth } from "@/hooks/useAuth";
 import type { CreateUserDTO } from "@/types";
 import { CreateUserFromSchema } from "./schema";
+import { useAuthContext } from "@/context/AuthProvider";
 
 export const SignUp = () => {
   const navigate = useNavigate();
-  const { signUp, isLoading, isAuthenticated, error } = useAuth();
+  const { signUp, isLoading, isAuthenticated, error } = useAuthContext();
   const form = useForm<CreateUserDTO>({
     resolver: zodResolver(CreateUserFromSchema),
     defaultValues: {

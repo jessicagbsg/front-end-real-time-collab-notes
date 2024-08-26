@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
 import { Heading, Heros, Footer, ExternalLayout } from "@/components";
 
 export function LandingPage() {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated } = useAuthContext();
 
   if (isAuthenticated) {
     return <Navigate to="/home" />;

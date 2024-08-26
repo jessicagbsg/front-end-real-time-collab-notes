@@ -17,14 +17,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
 import type { UserLoginDTO } from "@/types";
 import { UserLoginFromSchema } from "./schema";
 
 export const LogIn = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, isLoading, isAuthenticated, error } = useAuth();
+  const { login, isLoading, isAuthenticated, error } = useAuthContext();
   const form = useForm<UserLoginDTO>({
     resolver: zodResolver(UserLoginFromSchema),
     defaultValues: {

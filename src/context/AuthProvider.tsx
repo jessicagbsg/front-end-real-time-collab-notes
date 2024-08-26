@@ -4,7 +4,7 @@ import { CreateUserDTO, User, UserLoginDTO } from "@/types";
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  user: User | undefined;
+  user: Partial<User> | null;
   isLoading: boolean;
   error: null;
   login: (data: UserLoginDTO) => Promise<void>;
@@ -14,7 +14,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  user: undefined,
+  user: null,
   isLoading: true,
   error: null,
   login: async () => {},

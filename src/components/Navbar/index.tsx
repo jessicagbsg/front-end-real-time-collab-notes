@@ -2,12 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { Logo, Spinner, Button } from "@/components";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/context/AuthProvider";
 
 export const Navbar = () => {
   const scrolled = useScrollTop();
   const navigate = useNavigate();
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated } = useAuthContext();
 
   return (
     <div
