@@ -3,11 +3,21 @@ import { cn } from "@/lib/utils";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { Logo, Spinner, Button } from "@/components";
 import { useAuthContext } from "@/context/AuthProvider";
+import { useNotes } from "@/hooks/useNotes";
 
 export const Navbar = () => {
   const scrolled = useScrollTop();
   const navigate = useNavigate();
-  const { isLoading, isAuthenticated } = useAuthContext();
+  const { isLoading: loadingUser, isAuthenticated } = useAuthContext();
+  const { isLoading: loadingNotes } = useNotes();
+
+  if (loadingUser || loadingNotes) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -18,8 +28,7 @@ export const Navbar = () => {
     >
       <Logo />
       <div className="flex items-center gap-x-2 w-full justify-end md:ml-auto ">
-        {isLoading && <Spinner />}
-        {!isLoading && !isAuthenticated && (
+        {!loadingUser && !isAuthenticated && (
           <>
             <Button onClick={() => navigate("/login")} variant="ghost" size="sm">
               Log in

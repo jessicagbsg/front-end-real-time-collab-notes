@@ -10,8 +10,8 @@ import { useEffect } from "react";
 
 export const Home = () => {
   const navigate = useNavigate();
-  const { user, isLoading: userLoading } = useAuthContext();
-  const { notes, isLoading, addNote, error } = useNotes();
+  const { user, isLoading: loadingUser } = useAuthContext();
+  const { notes, isLoading: loadingNotes, addNote, error } = useNotes();
   const { toast } = useToast();
 
   const handleCreateNote = async () => {
@@ -29,7 +29,13 @@ export const Home = () => {
       });
   }, [error]);
 
-  if (isLoading || userLoading) return <Spinner />;
+  if (loadingUser || loadingNotes) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -40,7 +46,7 @@ export const Home = () => {
         <div
           className={cn(
             "flex flex-col w-full flex-1 gap-y-8 p-8 overflow-hidden",
-            !isLoading && notes.length
+            !loadingNotes && notes.length
               ? "items-start justify-start"
               : "text-center items-center justify-center"
           )}

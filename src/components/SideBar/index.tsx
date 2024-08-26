@@ -28,8 +28,8 @@ export const SideBar = ({
   setIsCollapsed: Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const navigate = useNavigate();
-  const { notes, addNote, setNotes, isLoading } = useNotes();
-  const { user, isLoading: useLoading } = useAuthContext();
+  const { notes, addNote, setNotes, isLoading: loadingNotes } = useNotes();
+  const { user, isLoading: loadingUser } = useAuthContext();
   const pathname = window.location.pathname;
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isResizingRef = useRef(false);
@@ -125,7 +125,13 @@ export const SideBar = ({
     if (isMobile) handleCollapse();
   }, [pathname, isMobile]);
 
-  if (isLoading || useLoading) return <Spinner />;
+  if (loadingUser || loadingNotes) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <>
