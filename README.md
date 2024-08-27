@@ -25,7 +25,7 @@ go to [notesphere](https://fenotesphere.vercel.app/) to see the layout and inter
 
 To run the project and use it you just have to clone the project, open in your prefered editor, run `npm i` and `npm run dev` 
 
-# What could be better
+# Future Improvements
 - Use a tool for note block such as `BlockNote` or `Quill`.
 - Use `Yjs` or `Automerge` to enhance data consistency and improve user experience.
 - Use `IndexedDB` to handle browser caching and enhancing offline exerience.
