@@ -6,7 +6,7 @@ import { API_URL } from "@/config/variables";
 import { Path } from "@/config/path";
 import { useNotes } from "@/hooks/useNotes";
 import { Share2 } from "lucide-react";
-import { isString } from "lodash";
+import { debounce, isString } from "lodash";
 import { formatDistance, subDays } from "date-fns";
 import { useAuthContext } from "@/context/AuthProvider";
 
@@ -28,6 +28,7 @@ export const Note = () => {
     title: note?.title ?? "",
     content: note?.content ?? "",
     updatedAt: "",
+    timestamp: "",
   });
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export const Note = () => {
         title: note.title ?? "",
         content: note.content ?? "",
         updatedAt: diff,
+        timestamp: updatedDate.toString(),
       }));
     }
   }, [note]);
@@ -74,29 +76,54 @@ export const Note = () => {
   }, [roomId, user?.id, toast]);
 
   useEffect(() => {
-    const handleEditNote = (updatedNote: { title: string; content: string }) => {
-      setNoteContent({ ...updatedNote, updatedAt: "just now" });
+    const handleEditedNote = (updatedNote: { title: string; content: string; updatedAt: Date }) => {
+      setNoteContent((prev) => {
+        const updatedDate = parseInt((new Date(updatedNote.updatedAt).getTime() / 1000).toFixed(0));
+        const prevDate = parseInt((new Date(prev.timestamp).getTime() / 1000).toFixed(0));
+
+        if (updatedDate - prevDate > 1) {
+          return {
+            ...updatedNote,
+            updatedAt: formatDistance(updatedNote.updatedAt, new Date(), {
+              addSuffix: true,
+            }),
+            timestamp:
+              updatedDate - prevDate > 1 ? prev.timestamp : updatedNote.updatedAt.toString(),
+          };
+        }
+        return prev;
+      });
     };
 
-    socket.on("edit-note", handleEditNote);
+    socket.on("edit-note", handleEditedNote);
 
     return () => {
-      socket.off("edit-note", handleEditNote);
+      socket.off("edit-note", handleEditedNote);
     };
   }, []);
 
+  const emitEditNote = debounce((title: string, content: string) => {
+    socket.emit("edit-note", {
+      room: roomId,
+      title,
+      content,
+    });
+  }, 150);
+
   const handleEditNote = (e: ChangeEvent<HTMLTextAreaElement>, field: "title" | "content") => {
     const value = e.target.value;
+
     setNoteContent((prev) => ({
       ...prev,
       [field]: value,
+      updatedAt: "just now",
+      timestamp: new Date().toString(),
     }));
 
-    socket.emit("edit-note", {
-      room: roomId,
-      title: field === "title" ? value : noteContent.title,
-      content: field === "content" ? value : noteContent.content,
-    });
+    emitEditNote(
+      field === "title" ? value : noteContent.title,
+      field === "content" ? value : noteContent.content
+    );
   };
 
   const handleShareNote = () => {
